@@ -11,12 +11,13 @@ requires-python = ">=3.12"
 license = {text = "MIT"}
 
 [tool.pytest.ini_options]
-addopts = "--cov=python_first_project --cov-report=term-missing"
+addopts = "--cov=src/python_first_project --cov-report=term-missing --cov-report=xml"
 testpaths = ["tests"]
 
 [tool.coverage.run]
-source = ["python_first_project"]
-omit = ["tests/*"]
+source = ["src/python_first_project"]
+omit = ["tests/*", "**/__pycache__/*"]
+branch = true
 
 [tool.coverage.report]
 exclude_lines = [

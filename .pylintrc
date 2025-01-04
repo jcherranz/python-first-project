@@ -1,0 +1,21 @@
+[MASTER]
+ignore=.git,__pycache__,.venv
+ignore-patterns=
+persistent=yes
+init-hook='import sys; sys.path.append(".")'
+
+[MESSAGES CONTROL]
+disable=C0111,C0115,C0116,R0903,R0913,W0511
+
+[FORMAT]
+max-line-length=88
+indent-after-paren=4
+indent-string='    '
+
+[BASIC]
+good-names=i,j,k,ex,Run,_,fd,fp,id
+
+[REPORTS]
+output-format=text
+reports=no
+score=yes

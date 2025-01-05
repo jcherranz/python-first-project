@@ -12,30 +12,46 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.12"]
+      fail-fast: false
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for proper versioning
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
+        cache: 'pip'  # Enable pip caching
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install pytest pytest-cov black isort pylint pre-commit
-        pip install -e .
+        pip install -e ".[dev]"  # Install package in editable mode with dev dependencies
+
+    - name: Cache pre-commit hooks
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pre-commit
+        key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
 
     - name: Run pre-commit checks
       uses: pre-commit/action@v3.0.0
 
     - name: Run tests with coverage
       run: |
-        pytest --cov=src/python_first_project --cov-report=xml
+        pytest --cov=src/python_first_project --cov-report=xml --cov-report=term
 
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v5
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        slug: jcherranz/python-first-project
+        file: ./coverage.xml
+        fail_ci_if_error: true
+        verbose: true
+
+    - name: Check package build
+      run: |
+        pip install build
+        python -m build
